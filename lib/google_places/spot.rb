@@ -24,8 +24,8 @@ module GooglePlaces
     #   - distance. This option sorts results in ascending order by their distance from the specified location.
     #     Ranking results by distance will set a fixed search radius of 50km.
     #     One or more of keyword, name, or types is required.
-    # @option options [String,Array] :types
-    #   Restricts the results to Spots matching at least one of the specified types
+    # @option options [String] :type
+    #   Restricts the results to Spots matching the specified type
     # @option options [String] :name
     #   A term to be matched against the names of Places.
     #   Results will be restricted to those containing the passed name value.
@@ -51,10 +51,10 @@ module GooglePlaces
       multipage_request = !!options.delete(:multipage)
       rankby = options.delete(:rankby)
       radius = options.delete(:radius) || 1000 if rankby.nil? || rankby =~ /prominence/
-      types  = options.delete(:types)
-      name  = options.delete(:name)
+      type = options.delete(:type)
+      name = options.delete(:name)
       keyword = options.delete(:keyword)
-      language  = options.delete(:language)
+      language = options.delete(:language)
       exclude = options.delete(:exclude) || []
       retry_options = options.delete(:retry_options) || {}
       zagat_selected = options.delete(:zagat_selected) || false
@@ -68,16 +68,11 @@ module GooglePlaces
         :name => name,
         :language => language,
         :keyword => keyword,
+        :type => type,
         :retry_options => retry_options
       }
 
       options[:zagatselected] = zagat_selected if zagat_selected
-
-      # Accept Types as a string or array
-      if types
-        types = (types.is_a?(Array) ? types.join('|') : types)
-        options.merge!(:types => types)
-      end
 
       request(:spots, multipage_request, exclude, options)
     end

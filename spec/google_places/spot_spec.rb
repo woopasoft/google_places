@@ -27,6 +27,7 @@ describe GooglePlaces::Spot do
           name: nil,
           language: nil,
           keyword: nil,
+          type: nil,
           retry_options: {}
         })
     end
@@ -45,24 +46,12 @@ describe GooglePlaces::Spot do
 
     describe 'with a single type', vcr: { cassette_name: 'list_spots_with_single_type' } do
       before(:each) do
-        @collection = GooglePlaces::Spot.list(@lat, @lng, api_key, :radius => @radius, :types => 'cafe')
+        @collection = GooglePlaces::Spot.list(@lat, @lng, api_key, :radius => @radius, :type => 'cafe')
       end
 
       it 'should have Spots with a specific type' do
         @collection.each do |spot|
           expect(spot.types).to include('cafe')
-        end
-      end
-    end
-
-    describe 'with multiple types', vcr: { cassette_name: 'list_spots_with_multiple_types' } do
-      before(:each) do
-        @collection = GooglePlaces::Spot.list(@lat, @lng, api_key, :radius => @radius, :types => ['food','establishment'])
-      end
-
-      it 'should have Spots with specific types' do
-        @collection.each do |spot|
-          expect(spot.types & ['food', 'establishment']).to be_any
         end
       end
     end
